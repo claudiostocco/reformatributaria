@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  Buttons, ssockets, RESTRequest4D;
+  Buttons, InterBaseUniProvider, Uni, ssockets, RESTRequest4D, fpjson,
+  jsonparser, DB;
 
 type
 
@@ -28,13 +29,24 @@ type
     mmResposta: TMemo;
     odCert: TOpenDialog;
     pcApi: TPageControl;
+    qCstAJUSTECREDITO: TStringField;
+    qCstCREDITOPRESUMIDOZFM: TStringField;
+    qCstDESCRICAO: TStringField;
+    qCstDIFERIMENTO: TStringField;
+    qCstID: TStringField;
+    qCstMONOFASICA: TStringField;
+    qCstREDUCAO: TStringField;
+    qCstTRANSFCREDITO: TStringField;
+    qCstTRIBUTACAO: TStringField;
     StatusBar1: TStatusBar;
     tsCff: TTabSheet;
+    dbCn: TUniConnection;
+    qCst: TUniQuery;
     procedure bbCertClick(Sender: TObject);
     procedure bExecCffClick(Sender: TObject);
     procedure odCertShow(Sender: TObject);
   private
-
+    procedure ContentProccess(Value: TJSONData);
   public
 
   end;
@@ -47,7 +59,7 @@ implementation
 {$R *.lfm}
 
 uses
-  httpsend, blcksock, ssl_openssl, fpjson, jsonparser;
+  httpsend, blcksock, ssl_openssl;
 
 { TfmMain }
 
@@ -55,7 +67,6 @@ function GetJSONFromAPI(const URL, CertFile, KeyPass: string): TJSONData;
 var
   HTTP: THTTPSend;
   sResult: string;
-  bOk: Boolean;
 begin
   HTTP := THTTPSend.Create;
   try
@@ -83,11 +94,6 @@ begin
   end;
 end;
 
-procedure OnGetSocketHandler(Sender : TObject; Const UseSSL : Boolean; Out AHandler : TSocketHandler);
-begin
-  AHandler:=nil;
-end;
-
 procedure TfmMain.bbCertClick(Sender: TObject);
 begin
   if odCert.Execute then
@@ -98,7 +104,7 @@ end;
 
 procedure TfmMain.bExecCffClick(Sender: TObject);
 var response: IResponse;
-    jsonData: TJSONData;
+    //jsonData: TJSONData;
 begin
   try
   response := TRequest.New
@@ -112,10 +118,11 @@ begin
       mmResposta.Lines.Text := response.JSONValue.AsJSON;
     end else
       mmResposta.Lines.Text := response.Content;
-
+      ContentProccess(response.JSONValue);
     // Ajustar certificados e URL da API
     //jsonData := GetJSONFromAPI(cbUrlCff.Text,eCertificado.Text,eSenhaCert.Text);
     //mmResposta.Lines.Text := jsonData.AsJSON;
+    //ContentProccess(jsonData);
       // Trabalhe com jsonData conforme necessidade
 
   except on e: Exception do
@@ -126,6 +133,35 @@ end;
 procedure TfmMain.odCertShow(Sender: TObject);
 begin
   odCert.InitialDir := ExtractFilePath(ParamStr(0));
+end;
+
+procedure TfmMain.ContentProccess(Value: TJSONData);
+var cst, classTrib: TJSONObject;
+    aClassTrib: TJSONArray;
+    i, j: Integer;
+begin
+  if Value is TJSONArray then
+  begin
+    for i := 0 to (Value as TJSONArray).Count - 1 do
+    begin
+      cst := (Value as TJSONArray).Objects[i];
+      qCst.Close;
+      qCst.ParamByName('ID').Text := cst.Get('CST','');
+      qCst.Open;
+      if qCst.IsEmpty then
+        qCst.Append
+      else
+        qCst.Edit;
+      qCstID.Text := cst.Get('CST','');
+
+      aClassTrib := cst.Get('classificacoesTributarias',TJSONArray.Create);
+      for j := 0 to aClassTrib.Count - 1 do
+      begin
+        classTrib := aClassTrib.Objects[i];
+        ShowMessage(classTrib.AsJSON);
+      end;
+    end;
+  end;
 end;
 
 end.

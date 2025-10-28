@@ -25,6 +25,15 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="unidac10"/>
+      </Item>
+      <Item>
+        <PackageName Value="dclunidac10"/>
+      </Item>
+      <Item>
+        <PackageName Value="ibprovider10"/>
+      </Item>
+      <Item>
         <PackageName Value="laz_synapse"/>
       </Item>
       <Item>

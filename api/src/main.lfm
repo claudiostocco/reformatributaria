@@ -6,7 +6,6 @@ object fmMain: TfmMain
   Caption = 'Consumir recursos de APIs da reforma tributária'
   ClientHeight = 567
   ClientWidth = 779
-  LCLVersion = '4.0.0.4'
   object StatusBar1: TStatusBar
     Left = 0
     Height = 19
@@ -36,6 +35,7 @@ object fmMain: TfmMain
       BorderSpacing.Top = 4
       BorderSpacing.Bottom = 8
       TabOrder = 0
+      Text = '10.10.10.203/3080:e:\easy\clientes\supuniao.fdb'
       TextHint = 'servidor/porta:caminho'
     end
     object bConectar: TBitBtn
@@ -125,7 +125,7 @@ object fmMain: TfmMain
     TabOrder = 2
     object tsCff: TTabSheet
       Caption = 'Portal da Conformidade Fácil'
-      ClientHeight = 168
+      ClientHeight = 171
       ClientWidth = 767
       object cbUrlCff: TComboBox
         Left = 16
@@ -243,6 +243,7 @@ object fmMain: TfmMain
         Top = 131
         Width = 160
         TabOrder = 3
+        Text = '12345678'
         TextHint = 'Senha Certificado'
       end
       object bExecCff: TBitBtn
@@ -345,5 +346,132 @@ object fmMain: TfmMain
     Filter = 'Arquivo de Certificado (*.pfx;*.pem)|*.pfx;*.pem'
     Left = 622
     Top = 171
+  end
+  object dbCn: TUniConnection
+    Connected = True
+    LoginPrompt = False
+    AutoCommit = False
+    ProviderName = 'InterBase'
+    Port = 3080
+    Database = 'e:\easy\clientes\supuniao.fdb'
+    Username = 'sysdba'
+    Server = '10.10.10.203'
+    Left = 536
+    Top = 16
+    EncryptedPassword = '8FFF99FF98FF93FF9AFF8CFF8CFF9EFF'
+  end
+  object qCst: TUniQuery
+    Connection = dbCn
+    SQL.Strings = (
+      'SELECT ID'
+      '     , DESCRICAO'
+      '     , TRIBUTACAO'
+      '     , REDUCAO'
+      '     , TRANSFCREDITO'
+      '     , DIFERIMENTO'
+      '     , MONOFASICA'
+      '     , CREDITOPRESUMIDOZFM'
+      '     , AJUSTECREDITO'
+      'FROM CSTRT'
+      'WHERE ID = :ID'
+    )
+    FilterOptions = []
+    Left = 448
+    Top = 16
+    ParamData = <    
+      item
+        DataType = ftUnknown
+        Name = 'ID'
+      end>
+    object qCstID: TStringField
+      FieldKind = fkData
+      FieldName = 'ID'
+      Index = 0
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = True
+      Size = 3
+    end
+    object qCstDESCRICAO: TStringField
+      FieldKind = fkData
+      FieldName = 'DESCRICAO'
+      Index = 1
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 50
+    end
+    object qCstTRIBUTACAO: TStringField
+      FieldKind = fkData
+      FieldName = 'TRIBUTACAO'
+      Index = 2
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 1
+    end
+    object qCstREDUCAO: TStringField
+      FieldKind = fkData
+      FieldName = 'REDUCAO'
+      Index = 3
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 1
+    end
+    object qCstTRANSFCREDITO: TStringField
+      FieldKind = fkData
+      FieldName = 'TRANSFCREDITO'
+      Index = 4
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 1
+    end
+    object qCstDIFERIMENTO: TStringField
+      FieldKind = fkData
+      FieldName = 'DIFERIMENTO'
+      Index = 5
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 1
+    end
+    object qCstMONOFASICA: TStringField
+      FieldKind = fkData
+      FieldName = 'MONOFASICA'
+      Index = 6
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 1
+    end
+    object qCstCREDITOPRESUMIDOZFM: TStringField
+      FieldKind = fkData
+      FieldName = 'CREDITOPRESUMIDOZFM'
+      Index = 7
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 1
+    end
+    object qCstAJUSTECREDITO: TStringField
+      FieldKind = fkData
+      FieldName = 'AJUSTECREDITO'
+      Index = 8
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 1
+    end
   end
 end
