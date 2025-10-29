@@ -348,7 +348,6 @@ object fmMain: TfmMain
     Top = 171
   end
   object dbCn: TUniConnection
-    Connected = True
     LoginPrompt = False
     AutoCommit = False
     ProviderName = 'InterBase'
@@ -472,6 +471,131 @@ object fmMain: TfmMain
       ReadOnly = False
       Required = False
       Size = 1
+    end
+  end
+  object qClassTrib: TUniQuery
+    Connection = dbCn
+    SQL.Strings = (
+      'SELECT ID'
+      '     , DESCRICAO'
+      '     , TXREDIBS'
+      '     , TXREDCBS'
+      '     , REDUCAOBC'
+      '     , TRIBREGULAR'
+      '     , CREDITOPRESUMIDO'
+      '     , ESTORNOCREDITO'
+      '     , TIPOALIQUOTA'
+      '     , DFEASSOCIADO'
+      'FROM CLASSTRIB'
+      'WHERE ID = :ID'
+    )
+    FilterOptions = []
+    Left = 352
+    Top = 16
+    ParamData = <    
+      item
+        DataType = ftUnknown
+        Name = 'ID'
+      end>
+    object qClassTribID: TStringField
+      FieldKind = fkData
+      FieldName = 'ID'
+      Index = 0
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = True
+      Size = 6
+    end
+    object qClassTribDESCRICAO: TStringField
+      FieldKind = fkData
+      FieldName = 'DESCRICAO'
+      Index = 1
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 180
+    end
+    object qClassTribTXREDIBS: TFloatField
+      FieldKind = fkData
+      FieldName = 'TXREDIBS'
+      Index = 2
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Precision = 9
+    end
+    object qClassTribTXREDCBS: TFloatField
+      FieldKind = fkData
+      FieldName = 'TXREDCBS'
+      Index = 3
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Precision = 9
+    end
+    object qClassTribREDUCAOBC: TStringField
+      FieldKind = fkData
+      FieldName = 'REDUCAOBC'
+      Index = 4
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 1
+    end
+    object qClassTribTRIBREGULAR: TStringField
+      FieldKind = fkData
+      FieldName = 'TRIBREGULAR'
+      Index = 5
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 1
+    end
+    object qClassTribCREDITOPRESUMIDO: TStringField
+      FieldKind = fkData
+      FieldName = 'CREDITOPRESUMIDO'
+      Index = 6
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 1
+    end
+    object qClassTribESTORNOCREDITO: TStringField
+      FieldKind = fkData
+      FieldName = 'ESTORNOCREDITO'
+      Index = 7
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 1
+    end
+    object qClassTribTIPOALIQUOTA: TStringField
+      FieldKind = fkData
+      FieldName = 'TIPOALIQUOTA'
+      Index = 8
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 40
+    end
+    object qClassTribDFEASSOCIADO: TStringField
+      FieldKind = fkData
+      FieldName = 'DFEASSOCIADO'
+      Index = 9
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 120
     end
   end
 end

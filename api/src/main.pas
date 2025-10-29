@@ -29,6 +29,16 @@ type
     mmResposta: TMemo;
     odCert: TOpenDialog;
     pcApi: TPageControl;
+    qClassTribCREDITOPRESUMIDO: TStringField;
+    qClassTribDESCRICAO: TStringField;
+    qClassTribDFEASSOCIADO: TStringField;
+    qClassTribESTORNOCREDITO: TStringField;
+    qClassTribID: TStringField;
+    qClassTribREDUCAOBC: TStringField;
+    qClassTribTIPOALIQUOTA: TStringField;
+    qClassTribTRIBREGULAR: TStringField;
+    qClassTribTXREDCBS: TFloatField;
+    qClassTribTXREDIBS: TFloatField;
     qCstAJUSTECREDITO: TStringField;
     qCstCREDITOPRESUMIDOZFM: TStringField;
     qCstDESCRICAO: TStringField;
@@ -42,6 +52,7 @@ type
     tsCff: TTabSheet;
     dbCn: TUniConnection;
     qCst: TUniQuery;
+    qClassTrib: TUniQuery;
     procedure bbCertClick(Sender: TObject);
     procedure bExecCffClick(Sender: TObject);
     procedure odCertShow(Sender: TObject);
@@ -153,12 +164,53 @@ begin
       else
         qCst.Edit;
       qCstID.Text := cst.Get('CST','');
+      qCstDESCRICAO.Text := cst.Get('DescricaoCST','');
+      qCstTRIBUTACAO.Text := IfThen(cst.Get('IndIBSCBS',false),'S','N');
+      qCstREDUCAO.Text := IfThen(cst.Get('IndRedBC',false),'B',IfThen(cst.Get('IndRedAliq',false),'A','N'));
+      qCstTRANSFCREDITO.Text := IfThen(cst.Get('IndTransfCred',false),'S','N');
+      qCstDIFERIMENTO.Text := IfThen(cst.Get('IndDif',false),'S','N');
+      qCstMONOFASICA.Text := IfThen(cst.Get('IndIBSCBSMono',false),'S','N');
+      qCstCREDITOPRESUMIDOZFM.Text := IfThen(cst.Get('IndCredPresIBSZFM',false),'S','N');
+      qCstAJUSTECREDITO.Text := IfThen(cst.Get('IndAjusteCompet',false),'S','N');
+      qCst.Post;
+      qCst.Close;
 
       aClassTrib := cst.Get('classificacoesTributarias',TJSONArray.Create);
       for j := 0 to aClassTrib.Count - 1 do
       begin
         classTrib := aClassTrib.Objects[i];
-        ShowMessage(classTrib.AsJSON);
+        qClassTrib.Close;
+        qClassTrib.ParamByName('ID').Text := cst.Get('cClassTrib','');
+        qClassTrib.Open;
+        if qClassTrib.IsEmpty then
+          qClassTrib.Append
+        else
+          qClassTrib.Edit;
+        qClassTribID.Text := cst.Get('cClassTrib','');
+        qClassTribDESCRICAO.Text := cst.Get('','');
+        qClassTribTIPOALIQUOTA.Text := cst.Get('','');
+        qClassTribTXREDIBS.Text := cst.Get('',0.0);
+        qClassTribTXREDCBS.Text := cst.Get('',0.0);
+        qClassTribREDUCAOBC.Text := IfThen(cst.Get('',false),'S','N');
+        qClassTribTRIBREGULAR.Text := IfThen(cst.Get('',false),'S','N');
+        qClassTribCREDITOPRESUMIDO.Text := IfThen(cst.Get('',false),'S','N');
+        qClassTribESTORNOCREDITO.Text := IfThen(cst.Get('',false),'S','N');
+
+        qClassTribDFEASSOCIADO.Text := IfThen(cst.Get('',false),'S','N')+
+                                       IfThen(cst.Get('',false),'S','N')+
+                                       IfThen(cst.Get('',false),'S','N')+
+                                       IfThen(cst.Get('',false),'S','N')+
+                                       IfThen(cst.Get('',false),'S','N')+
+                                       IfThen(cst.Get('',false),'S','N')+
+                                       IfThen(cst.Get('',false),'S','N')+
+                                       IfThen(cst.Get('',false),'S','N')+
+                                       IfThen(cst.Get('',false),'S','N')+
+                                       IfThen(cst.Get('',false),'S','N')+
+                                       IfThen(cst.Get('',false),'S','N')+
+                                       IfThen(cst.Get('',false),'S','N');
+
+        qClassTrib.Post;
+        qClassTrib.Close;
       end;
     end;
   end;
