@@ -349,7 +349,6 @@ object fmMain: TfmMain
   end
   object dbCn: TUniConnection
     LoginPrompt = False
-    AutoCommit = False
     ProviderName = 'InterBase'
     Port = 3080
     Database = 'e:\easy\clientes\supuniao.fdb'
@@ -371,7 +370,7 @@ object fmMain: TfmMain
       '     , MONOFASICA'
       '     , CREDITOPRESUMIDOZFM'
       '     , AJUSTECREDITO'
-      'FROM CSTRT'
+      'FROM CSTIBSCBS'
       'WHERE ID = :ID'
     )
     FilterOptions = []
@@ -486,6 +485,7 @@ object fmMain: TfmMain
       '     , ESTORNOCREDITO'
       '     , TIPOALIQUOTA'
       '     , DFEASSOCIADO'
+      '     , ANEXO'
       'FROM CLASSTRIB'
       'WHERE ID = :ID'
     )
@@ -596,6 +596,15 @@ object fmMain: TfmMain
       ReadOnly = False
       Required = False
       Size = 120
+    end
+    object qClassTribANEXO: TSmallintField
+      FieldKind = fkData
+      FieldName = 'ANEXO'
+      Index = 10
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
     end
   end
 end

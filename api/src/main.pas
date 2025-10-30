@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  Buttons, InterBaseUniProvider, Uni, ssockets, RESTRequest4D, fpjson,
+  Buttons, StrUtils, InterBaseUniProvider, Uni, ssockets, RESTRequest4D, fpjson,
   jsonparser, DB;
 
 type
@@ -29,6 +29,7 @@ type
     mmResposta: TMemo;
     odCert: TOpenDialog;
     pcApi: TPageControl;
+    qClassTribANEXO: TSmallintField;
     qClassTribCREDITOPRESUMIDO: TStringField;
     qClassTribDESCRICAO: TStringField;
     qClassTribDFEASSOCIADO: TStringField;
@@ -57,10 +58,12 @@ type
     procedure bExecCffClick(Sender: TObject);
     procedure odCertShow(Sender: TObject);
   private
+    function hasDFe(json: TJSONObject): String;
     procedure ContentProccess(Value: TJSONData);
   public
-
   end;
+
+const aDFe: Array of String = ('NFe','NFCe','CTe','CTeOS','BPe','NF3e','NFCom','NFSE','BPeTM','BPeTA','NFAg','NFSVIA','NFABI','NFGas','DERE');
 
 var
   fmMain: TfmMain;
@@ -146,24 +149,35 @@ begin
   odCert.InitialDir := ExtractFilePath(ParamStr(0));
 end;
 
+function TfmMain.hasDFe(json: TJSONObject): String;
+var i: Integer;
+begin
+  Result := '';
+  for i := 0 to Length(aDFe) - 1 do
+    if json.Get('Ind'+aDFe[i],false) then
+      Result := Result+IfThen(Result.IsEmpty,'',',')+aDFe[i];
+end;
+
 procedure TfmMain.ContentProccess(Value: TJSONData);
 var cst, classTrib: TJSONObject;
     aClassTrib: TJSONArray;
     i, j: Integer;
+    sCSTId, sClassTribId: String;
 begin
   if Value is TJSONArray then
   begin
     for i := 0 to (Value as TJSONArray).Count - 1 do
     begin
       cst := (Value as TJSONArray).Objects[i];
+      sCSTId := cst.Get('CST','');
       qCst.Close;
-      qCst.ParamByName('ID').Text := cst.Get('CST','');
+      qCst.ParamByName('ID').Text := sCSTId;
       qCst.Open;
       if qCst.IsEmpty then
         qCst.Append
       else
         qCst.Edit;
-      qCstID.Text := cst.Get('CST','');
+      qCstID.Text := sCSTId;
       qCstDESCRICAO.Text := cst.Get('DescricaoCST','');
       qCstTRIBUTACAO.Text := IfThen(cst.Get('IndIBSCBS',false),'S','N');
       qCstREDUCAO.Text := IfThen(cst.Get('IndRedBC',false),'B',IfThen(cst.Get('IndRedAliq',false),'A','N'));
@@ -178,37 +192,26 @@ begin
       aClassTrib := cst.Get('classificacoesTributarias',TJSONArray.Create);
       for j := 0 to aClassTrib.Count - 1 do
       begin
-        classTrib := aClassTrib.Objects[i];
+        classTrib := aClassTrib.Objects[j];
+        sClassTribId := classTrib.Get('cClassTrib','');
         qClassTrib.Close;
-        qClassTrib.ParamByName('ID').Text := cst.Get('cClassTrib','');
+        qClassTrib.ParamByName('ID').Text := sClassTribId;
         qClassTrib.Open;
         if qClassTrib.IsEmpty then
           qClassTrib.Append
         else
           qClassTrib.Edit;
-        qClassTribID.Text := cst.Get('cClassTrib','');
-        qClassTribDESCRICAO.Text := cst.Get('','');
-        qClassTribTIPOALIQUOTA.Text := cst.Get('','');
-        qClassTribTXREDIBS.Text := cst.Get('',0.0);
-        qClassTribTXREDCBS.Text := cst.Get('',0.0);
-        qClassTribREDUCAOBC.Text := IfThen(cst.Get('',false),'S','N');
-        qClassTribTRIBREGULAR.Text := IfThen(cst.Get('',false),'S','N');
-        qClassTribCREDITOPRESUMIDO.Text := IfThen(cst.Get('',false),'S','N');
-        qClassTribESTORNOCREDITO.Text := IfThen(cst.Get('',false),'S','N');
-
-        qClassTribDFEASSOCIADO.Text := IfThen(cst.Get('',false),'S','N')+
-                                       IfThen(cst.Get('',false),'S','N')+
-                                       IfThen(cst.Get('',false),'S','N')+
-                                       IfThen(cst.Get('',false),'S','N')+
-                                       IfThen(cst.Get('',false),'S','N')+
-                                       IfThen(cst.Get('',false),'S','N')+
-                                       IfThen(cst.Get('',false),'S','N')+
-                                       IfThen(cst.Get('',false),'S','N')+
-                                       IfThen(cst.Get('',false),'S','N')+
-                                       IfThen(cst.Get('',false),'S','N')+
-                                       IfThen(cst.Get('',false),'S','N')+
-                                       IfThen(cst.Get('',false),'S','N');
-
+        qClassTribID.Text := sClassTribId;
+        qClassTribDESCRICAO.Text := classTrib.Get('DescricaoClassTrib','');
+        qClassTribTIPOALIQUOTA.Text := classTrib.Get('TipoAliquota','');
+        qClassTribTXREDIBS.Value := classTrib.Get('pRedIBS',0.0);
+        qClassTribTXREDCBS.Value := classTrib.Get('pRedCBS',0.0);
+        qClassTribREDUCAOBC.Text := IfThen(classTrib.Get('IndRedutorBC',false),'S','N');
+        qClassTribTRIBREGULAR.Text := IfThen(classTrib.Get('IndTribRegular',false),'S','N');
+        qClassTribCREDITOPRESUMIDO.Text := IfThen(classTrib.Get('IndCredPresOper',false),'S','N');
+        qClassTribESTORNOCREDITO.Text := IfThen(classTrib.Get('IndEstornoCred',false),'S','N');
+        qClassTribDFEASSOCIADO.Text := hasDFe(classTrib);
+        qClassTribANEXO.Value := classTrib.Get('Anexo',0);
         qClassTrib.Post;
         qClassTrib.Close;
       end;
