@@ -15,7 +15,10 @@ if response.status_code == 200:
     soup = BeautifulSoup(response.content, 'html.parser')
 
     # Encontra a tabela na página (ajuste o seletor conforme necessário)
-    table = soup.find('tbody', {'id': 'tab-pai-body'})  # Substitua 'classificacaoTable' pelo ID correto da tabela
+    table = soup.find('table')
+    print(table)
+    tbody = soup.find('tbody', {'id': 'tab-pai-body'})  # Substitua 'classificacaoTable' pelo ID correto da tabela
+    print(len(table.find_all('tr')))
 
     # Extrai os dados da tabela
     data = []
