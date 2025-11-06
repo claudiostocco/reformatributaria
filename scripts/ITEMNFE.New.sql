@@ -90,31 +90,30 @@ returns (
     MOTDESICMS smallint,
     /* Reforma Trib */
     INDBEMMOVELUSADO smallint,
-    CSTIS char(3),
     CLASTRIBIS char(6),
     BCIS numeric(9,2),
     TXIS numeric(9,4),
-    CSTIBSCBS char(3),
+    VLIS numeric(9,2),
     CLASTRIBIBSCBS char(6),
+    CLASTRIBIBSCBS_REG char(6),
     BCIBSCBS numeric(9,2),
     TXIBSUF numeric(9,4),
     TXDIFIBSUF numeric(9,4),
     VLDEVTRIBIBSUF numeric(9,2),
-    TXREDIBSUF numeric(9,4),
     TXIBSMUN numeric(9,4),
     TXDIFIBSMUN numeric(9,4),
     VLDEVTRIBIBSMUN numeric(9,2),
-    TXREDIBSMUN numeric(9,4),
     TXCBS numeric(9,4),
     TXDIFCBS numeric(9,4),
     VLDEVTRIBCBS numeric(9,2),
-    TXREDCBS numeric(9,4))
+    DFEREF_CHAVE VARCHAR(44),
+    DFEREF_NITEM SMALLINT)
     /* Reforma Trib */
 as
 declare variable ACODIGO char(2);
 declare variable VLTOTAL numeric(9,2);
 declare variable VLIPICOMPRA numeric(9,2);
-declare variable SQL varchar(580); /* AO MUDAR O SQL, NAO ESQUECER QUE IDNO=62 E MAIOR */
+declare variable SQL varchar(610); /* AO MUDAR O SQL, NAO ESQUECER QUE IDNO=62 E MAIOR */
 declare variable ECODIGO smallint;
 declare variable IDNO integer;
 declare variable INDOPFINAL char(1);
@@ -138,7 +137,7 @@ BEGIN
          'i.TOTAL, i.ACODIGO, i.CST, i.TXBCR, i.BCICMS, i.ALIQUOTAUF, i.VALORICMS, i.BCST, i.VALORST, '||
          'i.IDCSTIPI, i.TXIPI, i.VALORIPI, i.VALORISS, i.IDCSTPIS, i.BCPIS, i.TXPIS, i.VLPIS, i.IDCSTCOFINS, i.BCCOFINS, '||
          'i.TXCOFINS, i.VLCOFINS, i.DACESSORIA, i.FRETE, i.NDRAWBACK, i.ENQIPI, COALESCE(i.INDTOT,''1''), i.CLASTRIBIBSCBS, '||
-         'i.CLASTRIBIS, i.TXIS, i.TXIBSUF, i.TXIBSMUN, i.TXCBS';
+         'i.CLASTRIBIS, i.TXIS, i.TXIBSUF, i.TXIBSMUN, i.TXCBS ';
    SELECT n.ECODIGO, n.IDNO, SUBSTRING(ne.IDMUNICIPIO FROM 1 FOR 2), n.INDOPFINAL, n.INDDESTINO, op.FINNFE, ne.IDMDF FROM NFC n
         INNER JOIN NFCE ne ON n.ID = ne.ID INNER JOIN NATUREZAOP op ON op.ID = n.IDNO
         WHERE n.ID = :ID INTO :ECODIGO, :IDNO, :UFENT, :INDOPFINAL, :INDDESTINO, :FINNFE, :IDMDF;
@@ -175,22 +174,20 @@ BEGIN
 
       /* Reforma Trib */
       INDBEMMOVELUSADO = 0;
-      CSTIS = SUBSTRING(:CLASTRIBIS FROM 1 FOR 3);
-      CSTIBSCBS = SUBSTRING(:CLASTRIBIBSCBS FROM 1 FOR 3);
-      BCIS = 0;
-      BCIBSCBS = :BCICMS;
+      BCIS = :VLPRODUTO + :DESPESAACESSORIA + :FRETE - :DESCONTO;
+      VLIS = CAST(:BCIS * :TXIS AS NUMERIC(9,2));
+      BCIBSCBS = :VLPRODUTO + :DESPESAACESSORIA + :FRETE + :VLIS - :DESCONTO;
       
       TXDIFIBSUF = 0;
       VLDEVTRIBIBSUF = 0;
-      SELECT TXREDIBS, TXREDCBS FROM CLASSTRIB WHERE ID = :CLASTRIBIBSCBS INTO :TXREDIBSUF, :TXREDCBS;
-      
       TXDIFIBSMUN = TXDIFIBSUF;
       VLDEVTRIBIBSMUN = VLDEVTRIBIBSUF;
-      TXREDIBSMUN = TXREDIBSUF;
-      
       TXDIFCBS = 0;
       VLDEVTRIBCBS = 0;
+      CLASTRIBIBSCBS_REG = '';
 
+      DFEREF_CHAVE = '';
+      DFEREF_NITEM = 0;
       /* Reforma Trib */
 
       SELECT ALIQUOTAICMSST FROM ESTADO WHERE ID = :UFENT INTO :TXST;
