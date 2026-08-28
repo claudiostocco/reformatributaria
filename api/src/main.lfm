@@ -6,6 +6,7 @@ object fmMain: TfmMain
   Caption = 'Consumir recursos de APIs da reforma tributária'
   ClientHeight = 567
   ClientWidth = 779
+  LCLVersion = '4.0.0.4'
   object stb: TStatusBar
     Left = 0
     Height = 19
@@ -129,7 +130,7 @@ object fmMain: TfmMain
     TabOrder = 2
     object tsCff: TTabSheet
       Caption = 'Portal da Conformidade Fácil'
-      ClientHeight = 171
+      ClientHeight = 168
       ClientWidth = 767
       object cbUrlCff: TComboBox
         Left = 16
@@ -137,9 +138,9 @@ object fmMain: TfmMain
         Top = 18
         Width = 731
         ItemHeight = 0
-        ItemIndex = 0
         Items.Strings = (
           'https://cff.svrs.rs.gov.br/api/v1/consultas/classTrib'
+          'https://cff.svrs.rs.gov.br/api/v1/consultas/anexos'
         )
         TabOrder = 0
         Text = 'https://cff.svrs.rs.gov.br/api/v1/consultas/classTrib'
@@ -323,7 +324,7 @@ object fmMain: TfmMain
     end
     object tsFile: TTabSheet
       Caption = 'Arquivo json'
-      ClientHeight = 171
+      ClientHeight = 168
       ClientWidth = 767
       object Label4: TLabel
         Left = 16
